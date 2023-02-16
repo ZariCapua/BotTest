@@ -2,10 +2,6 @@ var botScriptExecutor = require('bot-script').executor;
 var scr_config = require('./scr_config.json');
 
 
-
-
-
-
 let chat_history = {};
 let url = "";
 let param = JSON.stringify(chat_history);
@@ -54,8 +50,6 @@ function MessageHandler(context, event) {
 	}
 	
 }
-
-
 
 
 
