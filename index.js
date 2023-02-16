@@ -2,21 +2,21 @@ var botScriptExecutor = require('bot-script').executor;
 var scr_config = require('./scr_config.json');
 
 
-let chat_history = {};
-let url = "";
-let param = JSON.stringify(chat_history);
-let header = {"Content-Type ": "application/json"};
 
+let url = "http://mockbin.org/bin/955f6c04-a1f1-4955-a411-74a1cb44aa9f";
+let header = {"headers": {
+    "cookie": "foo=bar; bar=baz"
+  }};
 
+let chat_responses = []; // initialize an array to hold all the chat history objects
 function MessageHandler(context, event) {
-	//ScriptHandler(context, event);
 	let data = 
 	    [{
 	    id: 'FAQ_17',
 	    categories: 'Investors',
 	    questions: 'How much money do I need to invest?',
 	    answers: 'The minimum investment is only $100.'
-	  },
+	    },
 	    {
 	    id: 'FAQ_18',
 	    categories: 'Investors',
@@ -35,21 +35,36 @@ function MessageHandler(context, event) {
 	    questions: 'How much can I save when I use solar energy for my home?',
 	    answers: 'With solar energy, you can lower your electricity cost by as much as 50% to 100%.'
 	    }
-	    ] ;
+	    ];
 	    
   
-	for (var x in data){ //iterate on the JSON Object
-	  if (data[x].questions ==  event.message ){ //compare each question to user input
-	  //console.log(text[input]);
-	  //context.console.log(data[x].answers);
-	  chat_history.message = event.message;
-	  chat_history.response = data[x].answers;
-	  //context.sendResponse(data[x].answers ); //send correspomdimg amswer as Response 
-	  context.sendResponse(`question: ${chat_history.message} answer: ${chat_history.response} `);
-	  }
-	}
-	
+
+    for (var x in data) { //iterate on the JSON Object
+        if (data[x].questions == event.message) { //compare each question to user input
+            let chat_history = {}; // initialize a chat history object for this question
+            chat_history.message = event.message;
+            chat_history.response = data[x].answers;
+            chat_responses.push(chat_history); // add the chat history object to the responses array
+            context.sendResponse(data[x].answers);
+        }
+    }
+      
+   if (chat_responses.length > 0) { // check if there are any chat history objects
+        context.simplehttp.makePost(url,JSON.stringify(chat_responses),header);
+    } else {
+        context.sendResponse("Please ask a question."); // send a default message if there are no matches
+    }
+ 
 }
+
+
+function HttpResponseHandler(context, event) {
+       // context.sendResponse( JSON.stringify(event.getresp, null, '\t'));
+        let response= JSON.parse(event.getresp);
+        //context.sendResponse(""); // change later to console log
+}
+
+
 
 
 
@@ -78,18 +93,15 @@ function ScriptHandler(context, event){
     botScriptExecutor.execute(options, event, context);
 }
 
-function HttpResponseHandler(context, event) {
-    if (event.geturl === "http://ip-api.com/json")
-        context.sendResponse('This is response from http \n' + JSON.stringify(event.getresp, null, '\t'));
-}
 
 function DbGetHandler(context, event) {
     context.sendResponse("testdbput keyword was last sent by:" + JSON.stringify(event.dbval));
 }
-
 function DbPutHandler(context, event) {
     context.sendResponse("testdbput keyword was last sent by:" + JSON.stringify(event.dbval));
 }
+
+
 
 function HttpEndpointHandler(context, event) {
     context.sendResponse('This is response from http \n' + JSON.stringify(event, null, '\t'));
@@ -98,6 +110,8 @@ function HttpEndpointHandler(context, event) {
 function LocationHandler(context, event) {
     context.sendResponse("Got location");
 };
+
+
 
 exports.onMessage = MessageHandler;
 exports.onEvent = EventHandler;
