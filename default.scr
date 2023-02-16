@@ -1,0 +1,7 @@
+[main]
+   label_dych:Welcome to the Bots World:continue
+       label_mxke:{"name":"quickreply","type":"quick_reply","alias":"Hi. Would you like to enquire or transact?","msgid":"505a73db-b86d-e4a1-da47-20c7ce610b92","content":{"type":"text","text":"Hi. Would you like to enquire or transact?"},"options":[{"type":"text","title":"enquire","iconurl":"","id":"61cae4e6-a687-8901-bfd3-698a2840c52d","isDuplicate":false,"name":"user"},{"type":"text","title":"transact","iconurl":"","id":"f925afcf-dee0-ed75-b4c7-760f8a88912b","isDuplicate":false,"name":"user"}]}
+           label_arse:enquire
+               label_vqpt:Processing your inquiry...
+           label_nfqo:transact
+               label_stzi:Processing your transaction...
